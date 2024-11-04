@@ -16,21 +16,24 @@ const app = http.createServer(async (req, res) => {
 
   if (url === '/') {
     res.write('Hello Holberton School!');
+    res.end(); // End the response here
   } else if (url === '/students') {
-    res.write('This is the list of our students\n');
+    res.write('This is the list of our students:\n');
     try {
       const students = await countStudents(DATABASE);
       res.end(`${students.join('\n')}`);
     } catch (error) {
-      res.end(error.message);
+      res.statusCode = 500; // Set status code for server error
+      res.end(`Error: ${error.message}`);
     }
+  } else {
+    res.statusCode = 404; // Set status code for not found
+    res.end('Not Found');
   }
-  res.statusCode = 404;
-  res.end();
 });
 
 app.listen(port, hostname, () => {
-  //   console.log(`Server running at http://${hostname}:${port}/`);
+  console.log(`Server is running at http://${hostname}:${port}/`);
 });
 
 module.exports = app;
